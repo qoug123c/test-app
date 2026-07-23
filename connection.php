@@ -11,3 +11,10 @@ function connectPdo()
         exit();
     }
 }
+
+function createTodoData($todoText)
+{
+    $dbh = connectPdo();
+    $sql = 'INSERT INTO todos (content) VALUES ("' . $todoText . '")';
+    $dbh->query($sql);
+}
