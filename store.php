@@ -3,4 +3,4 @@ require_once('functions.php');
 // var_dump($_POST);  // ここを追記
 // exit;
 createData($_POST);
-header('Location: ./index.html');
+header('Location: ./index.php');
