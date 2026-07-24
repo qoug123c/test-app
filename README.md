@@ -169,6 +169,45 @@ PHPで他のファイルに書かれたプログラムを読み込んで、自�
     - `fetchAll()`： 見つかったデータを、1つずつではなく **「全部まとめてリスト（配列）」の形** にします。[※`fetchAll()`について](https://www.php.net/manual/ja/pdostatement.fetchall.php)
     - `return`：出来上がったリストを、この関数を呼び出した人に「はい、これが最新のリストだよ！」と手渡して終了します。
 ---
+### updateTodoData($post)
+<!-- (sc15) -->
+自作メソッド
+- **【引数】**
+  - **$post**：更新したい入力した内容。
+
+- **【していること】**
+  1. データベース接続
+    - `$dbh = connectPdo();`
+    - [connectPdo()](#function-connectpdo) 関数を呼び出しています。その関数を$dbh という名前の変数（ハンドル）に入れています。
+  2. SQLを作成
+    - `$sql = 'UPDATE todos SET content = "' . $post['content'] . '" WHERE id = ' . $post['id'];`
+    - すでにあるレコードの内容(`content`)を上書きする。条件としてレコードのidと一致すること。
+  3.  命令を実行（query）する
+    - `$dbh->query($sql);`
+    - `$dbh`を使用してデータベースにアクセスし、`$sql`のSQLを実行しています。[`query() `](https://www.php.net/manual/ja/pdo.query.php)メソッドはSQL文を準備して実行する機能を持っています。
+
+### function getTodoTextById($id)
+<!-- (sc15) -->
+自作メソッド
+
+「指定したID（番号）に対応する『やること（Todo）』の本文だけを、データベースからピンポイントで持ってくる」**という仕事をしています。
+- **【引数】**
+  - **$id**：$_GET['id'] のURLクエリパラメータ（index.phpでURLのパラメータとして渡したid）
+
+- **【していること】**
+  1. データベース接続
+    - `$dbh = connectPdo();`
+    - [connectPdo()](#function-connectpdo) 関数を呼び出しています。その関数を$dbh という名前の変数（ハンドル）に入れています。
+  2. SQLを作成
+    - `'SELECT * FROM todos WHERE deleted_at IS NULL AND id = $id';`
+    - データを取得する上での条件として、`todos`テーブルにある`deleted_at`(削除日時)がNULL(データがない)もので、$_GET['id'] で取得した`id`と同じ`id`であること。
+  3.  命令を実行（query）する
+    - `$data = $dbh->query($sql)->fetch();`
+    - `query($sql)`：`$dbh`を使用してデータベースにアクセスし、`query($sql)`でSQLを実行しています。  
+    - `fetch()`： 実行結果の中から、「最初の1行分」だけを取得します。
+    [※`fetch()`について](https://www.php.net/manual/ja/pdostatement.fetch.php)
+    - `return`：取得した結果の中から、content という列（Todoの本文が入っている場所）のデータだけを、この関数の呼び出し元に返します。
+
 <!-- ## edit.php  -->
 
 ## functions.php
@@ -191,6 +230,50 @@ PHPで他のファイルに書かれたプログラムを読み込んで、自�
 - **【していること】**
   - [`getAllRecords()`](#getallrecords)を呼び出して返してるだけ。
 ---
+### function getRefererPath()
+自作メソッド。
+
+**「ユーザーが直前に開いていたページのURLから、『パス（住所の後半部分）』だけを抜き出して特定する」**という仕事をしています。
+
+- **【引数】**
+  - なし
+
+- **【していること】**
+ 1. 直前のページの情報を取得する
+  - `$_SERVER['HTTP_REFERER']` ：ブラウザがサーバーに送ってくる情報の一つで、**「ユーザーがどのページからリンクを辿って現在のページに来たか」** という直前のURLが入っています。[※$_SERVERについて](https://www.php.net/manual/ja/reserved.variables.server.php)
+2. URLをバラバラに分解する（parse_url）
+  - `$urlArray = parse_url($_SERVER['HTTP_REFERER']);`
+    - `parse_url()`: この関数は、**URLを解釈して、その構成要素（プロトコル、ホスト名、パスなど）をバラバラに分解して返す**役割を持っています。
+    - 実行結果: 例えば直前のURLが `https://example.com/index.php` だった場合、この関数によって「ホスト名は `example.com`」「パスは /index.php」といった具合に整理されたリスト（配列）が作成され、変数 `$urlArray` に保存されます。
+3. パスだけを抜き出して返す（return）
+  - `return $urlArray['path'];`
+    - `$urlArray['path']`：分解されたリストの中から、「path（パス）」 というラベルが付いた情報（例：`/index.php`）だけを取り出しています。
+    - `return`：**プログラムの制御を呼び出し元に戻し**、取り出したパスの文字列を関数の結果として「はい、どうぞ！」と返します。
+---
+### function savePostedData($post) 
+自作メソッド
+
+**「送られてきたデータの内容と、そのデータが『どの画面から送られてきたか』をチェックして、実行する作業（保存・更新・削除）を自動で振り分ける司令塔」** の役割をしています。
+
+- **【引数】**
+  - **$post**：どこから来たかを確認する。
+
+- **【していること】**
+  1. 「どこから来たか」を特定する
+  - `$path = getRefererPath();`
+  - [getRefererPath()](#function-getrefererpath) 関数を呼び出しています。これにより、ユーザーが「新規作成画面 (/`new.php`)」「編集画面 (`/edit.php`)」「一覧画面 (`/index.php`)」のどこからボタンを押してここに来たのか、そのパスを特定して変数 `$path` に入れています。
+  2. switch 文による処理の振り分け
+  - 取得した `$path` の値に応じて処理を分岐させています。`switch` 文は、同じ式（ここでは `$path`）を異なる値と比較し、一致した場所のコードを実行するために使われます。
+    - `case '/new.php'` (新規登録)：ユーザーが新規作成画面から来た場合、`createTodoData()` 関数を呼び出してデータベースに新しい Todo を登録（INSERT）します。
+    - `case '/edit.php'` (更新)：編集画面から来た場合、`updateTodoData()` 関数を呼び出して既存のデータを書き換え（UPDATE）ます。
+    - `case '/index.php' `(削除)：一覧画面の削除ボタンから来た場合、`deleteTodoData()` 関数を呼び出して指定された ID のデータを削除します。
+  3. break の役割
+  - 各 `case` の最後にある `break` は、現在実行中の `switch` 構造を終了させる命令です。もし `break` を書き忘れると、PHP は一致した処理が終わった後も、その下にある別の `case` の命令を続けて実行してしまいます（これをフォールスルーといいます）。そのため、目的の処理だけを行わせるために `break` で「ここで終わり！」と明確に伝えています。
+  4. default の役割
+  - `default` は、どの `case` にも当てはまらなかった場合に実行される特別なケースです。このコードでは何もせず終了するように書かれています。
+
+---
+
 <!-- ## index.php  -->
 <!-- ## new.php  -->
 

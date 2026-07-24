@@ -41,7 +41,7 @@ function getTodoTextById($id)// (sc15)
     return $data['content'];
 }
 
-function deleteTodoData($id)
+function deleteTodoData($id)//論理削除のDB処理(sc16)
 {
     $dbh = connectPdo();
     $now = date('Y-m-d H:i:s');

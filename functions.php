@@ -10,6 +10,7 @@ function getSelectedTodo($id)//(sc15)
 {
     return getTodoTextById($id); 
 }
+
 function savePostedData($post) //処理の振り分けとリダイレクト設定(sc15)
 {
     $path = getRefererPath();
