@@ -7,7 +7,7 @@ function connectPdo()
     try {
         return new PDO(DSN, DB_USER, DB_PASSWORD);
     } catch (PDOException $e) {
-        echo $e->getMessage();
+        echo $e->getMessage(); //SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES)とか
         exit();
     }
 }
