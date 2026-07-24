@@ -20,6 +20,9 @@ function savePostedData($post) //処理の振り分けとリダイレクト設�
         case '/edit.php':
             updateTodoData($post); //編集ページからPOSTされたなら、updateTodoData関数 を実行（UPDATE処理）
             break;
+         case '/index.php': //(sc16)
+            deleteTodoData($post['id']); //削除処理
+            break; 
         default:
             break;
     }
