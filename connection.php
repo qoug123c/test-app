@@ -33,7 +33,7 @@ function updateTodoData($post)// 更新処理(sc15)
     $dbh->query($sql);
 }
 
-function getTodoTextById($id)// (sc15)
+function getTodoTextById($id)// 更新したいTODOの現在保存されているデータを取得する処理(sc15)
 {
     $dbh = connectPdo();
     $sql = 'SELECT * FROM todos WHERE deleted_at IS NULL AND id =' . $id;

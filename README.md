@@ -268,7 +268,7 @@ PHPで他のファイルに書かれたプログラムを読み込んで、自�
   - `$_SERVER['HTTP_REFERER']` ：ブラウザがサーバーに送ってくる情報の一つで、**「ユーザーがどのページからリンクを辿って現在のページに来たか」** という直前のURLが入っています。[※$_SERVERについて](https://www.php.net/manual/ja/reserved.variables.server.php)
 2. URLをバラバラに分解する（parse_url）
   - `$urlArray = parse_url($_SERVER['HTTP_REFERER']);`
-    - `parse_url()`: この関数は、**URLを解釈して、その構成要素（プロトコル、ホスト名、パスなど）をバラバラに分解して返す**役割を持っています。
+    - [`parse_url()`](https://www.php.net/manual/ja/function.parse-url.php): この関数は、**URLを解釈して、その構成要素（プロトコル、ホスト名、パスなど）をバラバラに分解して返す**役割を持っています。
     - 実行結果：例えば直前のURLが `https://example.com/index.php` だった場合、この関数によって「ホスト名は `example.com`」「パスは /index.php」といった具合に整理されたリスト（配列）が作成され、変数 `$urlArray` に保存されます。
 3. パスだけを抜き出して返す（return）
   - `return $urlArray['path'];`
@@ -285,17 +285,17 @@ PHPで他のファイルに書かれたプログラムを読み込んで、自�
 
 - **【していること】**
   1. 「どこから来たか」を特定する
-  - `$path = getRefererPath();`
-  - [getRefererPath()](#function-getrefererpath) 関数を呼び出しています。これにより、ユーザーが「新規作成画面 (/`new.php`)」「編集画面 (`/edit.php`)」「一覧画面 (`/index.php`)」のどこからボタンを押してここに来たのか、そのパスを特定して変数 `$path` に入れています。
+    - `$path = getRefererPath();`
+    - [getRefererPath()](#function-getrefererpath) 関数を呼び出しています。これにより、ユーザーが「新規作成画面 (/`new.php`)」「編集画面 (`/edit.php`)」「一覧画面 (`/index.php`)」のどこからボタンを押してここに来たのか、そのパスを特定して変数 `$path` に入れています。
   2. switch 文による処理の振り分け
-  - 取得した `$path` の値に応じて処理を分岐させています。`switch` 文は、同じ式（ここでは `$path`）を異なる値と比較し、一致した場所のコードを実行するために使われます。
-    - `case '/new.php'` (新規登録)：ユーザーが新規作成画面から来た場合、[`createTodoData()`](#function-createtododatatodotext) 関数を呼び出してデータベースに新しい Todo を登録（INSERT）します。
-    - `case '/edit.php'` (更新)：編集画面から来た場合、[`updateTodoData()`](#updatetododatapost) 関数を呼び出して既存のデータを書き換え（UPDATE）ます。
-    - `case '/index.php' `(削除)：一覧画面の削除ボタンから来た場合、[`deleteTodoData()`](#function-deletetododataid) 関数を呼び出して指定された ID のデータを削除します。
+    - 取得した `$path` の値に応じて処理を分岐させています。`switch` 文は、同じ式（ここでは `$path`）を異なる値と比較し、一致した場所のコードを実行するために使われます。
+      - `case '/new.php'` (新規登録)：ユーザーが新規作成画面から来た場合、[`createTodoData()`](#function-createtododatatodotext) 関数を呼び出してデータベースに新しい Todo を登録（INSERT）します。
+      - `case '/edit.php'` (更新)：編集画面から来た場合、[`updateTodoData()`](#updatetododatapost) 関数を呼び出して既存のデータを書き換え（UPDATE）ます。
+      - `case '/index.php' `(削除)：一覧画面の削除ボタンから来た場合、[`deleteTodoData()`](#function-deletetododataid) 関数を呼び出して指定された ID のデータを削除します。
   3. break の役割
-  - 各 `case` の最後にある `break` は、現在実行中の `switch` 構造を終了させる命令です。もし `break` を書き忘れると、PHP は一致した処理が終わった後も、その下にある別の `case` の命令を続けて実行してしまいます（これをフォールスルーといいます）。そのため、目的の処理だけを行わせるために `break` で「ここで終わり！」と明確に伝えています。
+    - 各 `case` の最後にある `break` は、現在実行中の `switch` 構造を終了させる命令です。もし `break` を書き忘れると、PHP は一致した処理が終わった後も、その下にある別の `case` の命令を続けて実行してしまいます（これをフォールスルーといいます）。そのため、目的の処理だけを行わせるために `break` で「ここで終わり！」と明確に伝えています。
   4. default の役割
-  - `default` は、どの `case` にも当てはまらなかった場合に実行される特別なケースです。このコードでは何もせず終了するように書かれています。
+    - `default` は、どの `case` にも当てはまらなかった場合に実行される特別なケースです。このコードでは何もせず終了するように書かれています。
 ---
 
 <!-- ## index.php  -->
