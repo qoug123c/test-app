@@ -34,3 +34,8 @@ function getRefererPath()//処理の振り分けとリダイレクト設定(sc15
     $urlArray = parse_url($_SERVER['HTTP_REFERER']);
     return $urlArray['path'];
 }
+
+function e($text)// エスケープ処理(sc18)
+{
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+}

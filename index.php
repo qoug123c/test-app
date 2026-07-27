@@ -1,5 +1,6 @@
 <?php 
 require_once('functions.php'); 
+header('Set-Cookie: userId=123');
 ?>
 
 <!DOCTYPE html>
@@ -25,14 +26,14 @@ require_once('functions.php');
       </tr>
       <?php foreach (getTodoList() as $todo): ?>
         <tr>
-          <td><?= $todo['id']; ?></td>
-          <td><?= $todo['content']; ?></td>
+          <td><?= e($todo['id']); ?></td>
+          <td><?= e($todo['content']); ?></td>
           <td>
-            <a href="edit.php?id=<?= $todo['id']; ?>">更新</a>
+            <a href="edit.php?id=<?= e($todo['id']); ?>">更新</a>
           </td>
           <td>
             <form action="store.php" method="post">
-              <input type="hidden" name="id" value="<?= $todo['id']; ?>"">
+              <input type="hidden" name="id" value="<?= e($todo['id']); ?>"">
               <button type="submit">削除</button>
             </form>
           </td>
