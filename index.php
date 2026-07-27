@@ -1,6 +1,7 @@
 <?php 
 require_once('functions.php'); 
 header('Set-Cookie: userId=123');
+setToken();//(sc19)
 ?>
 
 <!DOCTYPE html>
@@ -10,7 +11,9 @@ header('Set-Cookie: userId=123');
   <title>Home</title>
 </head>
 <body>
-  welcome hello world
+  <?php if (!empty($_SESSION['err'])): // (sc19)?>
+    <p><?= $_SESSION['err']; ?></p>
+  <?php endif; ?>
   <div>
      <a href="new.php">
        <p>新規作成</p>
@@ -33,7 +36,8 @@ header('Set-Cookie: userId=123');
           </td>
           <td>
             <form action="store.php" method="post">
-              <input type="hidden" name="id" value="<?= e($todo['id']); ?>"">
+              <input type="hidden" name="id" value="<?= e($todo['id']); ?>">
+              <input type="hidden" name="token" value="<?= $_SESSION['token']; // (sc19)?>"> 
               <button type="submit">削除</button>
             </form>
           </td>
@@ -41,5 +45,6 @@ header('Set-Cookie: userId=123');
       <?php endforeach; ?>
     </table>
   </div>
+ <?php unsetError(); ?>
 </body>
 </html>
