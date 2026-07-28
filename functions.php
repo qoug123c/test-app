@@ -15,6 +15,7 @@ function getSelectedTodo($id)//(sc15)
 function savePostedData($post) //処理の振り分けとリダイレクト設定(sc15)
 {
     checkToken($post['token']); // (sc19)
+    validate($post);//バリデーションチェック(sc20)
     $path = getRefererPath();
     switch ($path) {
         case '/new.php':
@@ -28,6 +29,13 @@ function savePostedData($post) //処理の振り分けとリダイレクト設�
             break; 
         default:
             break;
+    }
+}
+function validate($post)//バリデーションチェック(sc21)
+{
+    if (isset($post['content']) && $post['content'] === '') {
+        $_SESSION['err'] = '入力がありません';
+        redirectToPostedPage();
     }
 }
 
@@ -65,3 +73,4 @@ function redirectToPostedPage()
     header('Location: ' . $_SERVER['HTTP_REFERER']);
     exit();
 }
+
